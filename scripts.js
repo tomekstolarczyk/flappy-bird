@@ -63,10 +63,11 @@ function update() {
 
 function placePipes() {
 
+    let randomPipeY = pipeY - pipeHeight/4 - Math.random() * (pipeHeight/2);
 
     let topPipe = {
         x: pipeX,
-        y: pipeY,
+        y: randomPipeY,
         width: pipeWidth,
         height: pipeHeight
     }
