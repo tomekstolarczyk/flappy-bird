@@ -20,10 +20,14 @@ let pipeHeight = 512;
 let pipeX = boardWidth;
 let pipeY = 0;
 let topPipeImage;
+let bottomPipeImage;
 
 //physics
 let velocityX = -2;
 
+let gameOver = false;
+
+//tutaj inicjalizujemy gre
 window.onload = function() {
 
     board = document.getElementById("board");
@@ -41,31 +45,46 @@ window.onload = function() {
     //zaladowujemy rure
     topPipeImage = new Image();
     topPipeImage.src = "graphics/toppipe.png";
+    bottomPipeImage = new Image();
+    bottomPipeImage.src = "graphics/bottompipe.png";
 
     requestAnimationFrame(update);
-    setInterval(placePipes, 1500);
+    pipeInterval = setInterval(placePipes, 1500);
 
 }
 
 
+//tutaj tak naprawde dzieje sie cala gra
 function update() {
+
+    if (gameOver) {
+        clearInterval(pipeInterval);
+        return; 
+    }
+
     requestAnimationFrame(update);
     context.clearRect(0, 0, boardWidth, boardHeight);    
     context.drawImage(birdImage, bird.x, bird.y, bird.width, bird.height);
 
     for(let i = 0; i < pipeArray.length; i++) {
         pipeArray[i].x += velocityX;
-        context.drawImage(topPipeImage, pipeArray[i].x, pipeArray[i].y, pipeArray[i].width, pipeArray[i].height);
+        context.drawImage(pipeArray[i].image, pipeArray[i].x, pipeArray[i].y, pipeArray[i].width, pipeArray[i].height);
+
+        if (checkCollision(bird, pipeArray[i])) {
+            gameOver = true;
+        }
     }
-    
 }
 
 
+//tutaj nie rysujemy rur ale wpychamy je do tablicy
 function placePipes() {
 
     let randomPipeY = pipeY - pipeHeight/4 - Math.random() * (pipeHeight/2);
+    let pipeGap = pipeHeight/4;
 
     let topPipe = {
+        image: topPipeImage,
         x: pipeX,
         y: randomPipeY,
         width: pipeWidth,
@@ -73,5 +92,25 @@ function placePipes() {
     }
 
     pipeArray.push(topPipe);
-    
+
+    let bottomPipe = {
+        image: bottomPipeImage,
+        x: pipeX,
+        y: randomPipeY + pipeHeight + pipeGap,
+        width: pipeWidth,
+        height: pipeHeight
+    }
+
+    pipeArray.push(bottomPipe);
+}
+
+//teraz tutaj bedziemy wykrywac kolizje
+function checkCollision(a, b) {
+    if (a.x + a.width > b.x && 
+        a.x < b.x + b.width && 
+        a.y + a.height > b.y && 
+        a.y < b.y + b.height) {
+        return true;
+    }
+    return false;
 }
