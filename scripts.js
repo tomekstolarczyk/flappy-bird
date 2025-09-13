@@ -59,7 +59,11 @@ function update() {
 
     if (gameOver) {
         clearInterval(pipeInterval);
+        context.fillStyle = "white";
+        context.font = "20px Arial";
+        context.fillText("Game Over", boardWidth/2 - 50, boardHeight/2);
         return; 
+        
     }
 
     requestAnimationFrame(update);
