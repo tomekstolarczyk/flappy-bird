@@ -24,6 +24,8 @@ let bottomPipeImage;
 
 //physics
 let velocityX = -2;
+let velocityY = 0;
+let gravity = 0.4;
 
 let gameOver = false;
 
@@ -51,6 +53,12 @@ window.onload = function() {
     requestAnimationFrame(update);
     pipeInterval = setInterval(placePipes, 1500);
 
+    document.addEventListener("keydown", function(e) {
+        if (e.code === "Space") {
+            velocityY = -6;
+        }
+    });
+
 }
 
 
@@ -61,10 +69,14 @@ function update() {
         clearInterval(pipeInterval);
         context.fillStyle = "white";
         context.font = "20px Arial";
-        context.fillText("Game Over", boardWidth/2 - 50, boardHeight/2);
+        context.fillText("Game Over :(", boardWidth/2 - 50, boardHeight/2);
         return; 
-        
     }
+
+    //ruch ptaka
+    velocityY += gravity;
+    bird.y += velocityY;
+
 
     requestAnimationFrame(update);
     context.clearRect(0, 0, boardWidth, boardHeight);    
