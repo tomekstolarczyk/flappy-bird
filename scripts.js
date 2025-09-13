@@ -28,6 +28,7 @@ let velocityY = 0;
 let gravity = 0.4;
 
 let gameOver = false;
+let score = 0;
 
 //tutaj inicjalizujemy gre
 window.onload = function() {
@@ -73,14 +74,23 @@ function update() {
         return; 
     }
 
-    //ruch ptaka
-    velocityY += gravity;
-    bird.y += velocityY;
 
 
     requestAnimationFrame(update);
     context.clearRect(0, 0, boardWidth, boardHeight);    
     context.drawImage(birdImage, bird.x, bird.y, bird.width, bird.height);
+    
+
+    //ruch ptaka
+    velocityY += gravity;
+    bird.y += velocityY;
+    
+    //sufit i podloga
+    if (bird.y + bird.height/2 >= boardHeight) {
+        gameOver = true;
+    }
+    if (bird.y < 0) bird.y = 0;
+
 
     for(let i = 0; i < pipeArray.length; i++) {
         pipeArray[i].x += velocityX;
@@ -89,7 +99,18 @@ function update() {
         if (checkCollision(bird, pipeArray[i])) {
             gameOver = true;
         }
+
+        if (pipeArray[i].x + pipeArray[i].width < bird.x && !pipeArray[i].passed) {
+            score += 0.5;
+            pipeArray[i].passed = true;
+        }
     }
+
+    //score
+    context.fillStyle = "white";
+    context.font = "24px Arial";
+    context.fillText("Score: " + score, 10, 30);
+    
 }
 
 
@@ -104,7 +125,8 @@ function placePipes() {
         x: pipeX,
         y: randomPipeY,
         width: pipeWidth,
-        height: pipeHeight
+        height: pipeHeight,
+        passed: false
     }
 
     pipeArray.push(topPipe);
@@ -114,7 +136,8 @@ function placePipes() {
         x: pipeX,
         y: randomPipeY + pipeHeight + pipeGap,
         width: pipeWidth,
-        height: pipeHeight
+        height: pipeHeight,
+        passed: false
     }
 
     pipeArray.push(bottomPipe);
