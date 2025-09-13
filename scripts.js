@@ -56,7 +56,12 @@ window.onload = function() {
 
     document.addEventListener("keydown", function(e) {
         if (e.code === "Space") {
-            velocityY = -6;
+            if (gameOver) {
+                restartGame();
+                velocityY = -6;
+            } else {
+                velocityY = -6;
+            }
         }
     });
 
@@ -71,6 +76,7 @@ function update() {
         context.fillStyle = "white";
         context.font = "20px Arial";
         context.fillText("Game Over :(", boardWidth/2 - 50, boardHeight/2);
+        context.fillText("Press SPACE to restart", boardWidth/2 - 80, boardHeight/2 + 30);
         return; 
     }
 
@@ -152,4 +158,15 @@ function checkCollision(a, b) {
         return true;
     }
     return false;
+}
+
+function restartGame() {
+    gameOver = false;
+    score = 0;
+    bird.y = boardHeight/2;
+    velocityY = 0;
+    gravity = 0.4;
+    pipeArray = [];
+    pipeInterval = setInterval(placePipes, 1500);
+    requestAnimationFrame(update);
 }
